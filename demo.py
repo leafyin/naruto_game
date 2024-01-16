@@ -29,3 +29,6 @@ def next_level():
 
 def nameit():
     pass
+
+
+next_level()
