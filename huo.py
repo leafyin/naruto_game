@@ -13,8 +13,8 @@ auto_setup(devices=[
             f"&&touch_method=MAXTOUCH"
         ])
 
-fight_btn = Template(r"tpl1705393786480.png", record_pos=(0.405, 0.237), resolution=(1920, 1080))
-next_btn = Template(r"tpl1705394203127.png", record_pos=(0.197, 0.244), resolution=(1920, 1080))
+fight_btn = Template(r"img/tpl1705393786480.png", record_pos=(0.405, 0.237), resolution=(1920, 1080))
+next_btn = Template(r"img/tpl1705394203127.png", record_pos=(0.197, 0.244), resolution=(1920, 1080))
 while 1:
     try:
         if exists(next_btn):
