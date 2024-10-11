@@ -4,8 +4,8 @@ from airtest.core.api import *
 from airtest.core.settings import *
 
 # 需要设置几个常量:deviceid、屏幕分辨率(这里是1920*1080分辨率做参照)
-deviceid = "emulator-5554"
-resolution = (1920, 1080)
+deviceid = "emulator-5556"
+resolution = (1280, 720)
 
 auto_setup(devices=[
             f"Android://127.0.0.1:5037/{deviceid}?cap_method=JAVACAP"
@@ -27,7 +27,12 @@ class Res:
     receive_reward_btn = Template(r"img/tpl1705651327964.png", record_pos=(0.414, -0.034), resolution=resolution)
 
     # 玩法
-    wanfa_btn = Template(r"tpl1705653060271.png", record_pos=(0.45, 0.058), resolution=(1920, 1080))
+    wanfa_btn = Template(r"img/tpl1705653060271.png", record_pos=(0.45, 0.058), resolution=resolution)
+    fengraozhijian_btn = Template(r"img/tpl1728661026148.png", record_pos=(-0.226, -0.085), resolution=resolution)
+    money_entry = Template(r"img/tpl1728661370929.png", record_pos=(-0.283, 0.02), resolution=resolution)
+    quickly_fight = Template(r"img/tpl1728661514790.png", record_pos=(0.134, 0.231), resolution=resolution)
+    confirm_tab = Template(r"img/tpl1728661645563.png", record_pos=(0.002, -0.001), resolution=resolution)
+    agree_btn = Template(r"img/tpl1728661653449.png", record_pos=(0.146, 0.116), resolution=resolution)
 
 
 class NarutoGame:
@@ -82,7 +87,14 @@ class NarutoGame:
         完成丰饶之间
         :return:
         """
-
+        touch(Res.wanfa_btn)
+        touch(Res.fengraozhijian_btn)
+        touch(Res.money_entry)
+        for i in range(0, 2):
+            touch(Res.quickly_fight)
+            if exists(Res.agree_btn):
+                touch(Res.agree_btn)
+                touch((650, 550))
 
 
 if __name__ == '__main__':
