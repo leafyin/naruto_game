@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>列表展示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #4a4a4a; /* 背景稍微亮一点 */
+            display: flex;
+            justify-content: flex-start; /* 内容靠左 */
+            align-items: flex-start;
+            height: 100vh;
+        }
+        .container {
+            border: 3px solid #000; /* 黑色边框 */
+            border-radius: 40px; /* 框架圆角 */
+            background-color: #1c1c1c; /* 深色背景 */
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7); /* 强烈阴影效果 */
+            width: 400px;
+            height: 90vh; /* 框架高度与页面一致 */
+            max-width: 100%;
+            padding: 20px;
+            margin-left: 10px;
+            margin-top: 10px; /* 顶部留一些间距 */
+            overflow-y: auto; /* 支持滚动 */
+        }
+        table {
+            width: 100%; /* 表格宽度 */
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            font-size: 16px; /* 字体大小适中 */
+            color: #f0f0f0; /* 字体颜色为浅色 */
+            vertical-align: middle;
+        }
+        th {
+            background-color: #333; /* 表头背景为深色 */
+            border-bottom: 2px solid #007BFF; /* 表头底部边框 */
+        }
+        tr {
+            border-bottom: 1px solid #555; /* 行底部边框为深色 */
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:disabled {
+            background-color: #555; /* 置灰后的按钮颜色 */
+            cursor: not-allowed; /* 禁用时鼠标不可点击 */
+        }
+
+        /* 圆形进度条样式 */
+        .progress-circle {
+            width: 30px;
+            height: 30px;
+            position: relative;
+            display: inline-block;
+            margin-left: 10px; /* 与按钮保持同一行，稍微向右 */
+            vertical-align: middle; /* 与按钮平行 */
+            display: none; /* 默认不展示，点击时显示 */
+        }
+        .progress-circle svg {
+            transform: rotate(-90deg);
+        }
+        .progress-circle circle {
+            fill: none;
+            stroke-width: 3;
+        }
+        .progress-bg {
+            stroke: rgba(255, 255, 255, 0.2); /* 背景圆圈 */
+        }
+        .progress-fg {
+            stroke: #007BFF; /* 前景圆圈进度条 */
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+        .progress-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            color: #f0f0f0;
+        }
+
+        /* 记录区域 */
+        .record-section {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #1c1c1c;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            width: 250px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 添加阴影效果 */
+            color: #f0f0f0;
+            font-size: 14px;
+        }
+        .record-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .record-item.success::before {
+            content: '✔'; /* 绿色勾 */
+            color: green;
+            margin-right: 8px;
+        }
+        .record-item.failure::before {
+            content: '✖'; /* 红色叉 */
+            color: red;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="font-size: 1.2em; text-align: center; color: #f0f0f0; margin: 20px 0;">我的列表</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>项目名称</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                % for index, item in enumerate(items):
+                    <tr>
+                        <td>{{ item }}</td>
+                        <td>
+                            <button onclick="handleClick('{{ item }}', {{ index }}, this)">点击</button>
+                            <!-- 圆形进度条 -->
+                            <div class="progress-circle">
+                                <svg viewBox="0 0 32 32">
+                                    <circle class="progress-bg" cx="16" cy="16" r="15"></circle>
+                                    <circle class="progress-fg" cx="16" cy="16" r="15"></circle>
+                                </svg>
+                                <div class="progress-text">0%</div>
+                            </div>
+                        </td>
+                    </tr>
+                % end
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 记录展示区域 -->
+    <div class="record-section" id="recordSection">
+        <h3>操作记录</h3>
+    </div>
+
+    <script>
+        function handleClick(item, index, button) {
+            // 获取所有按钮并置灰
+            const allButtons = document.querySelectorAll('button');
+            allButtons.forEach(btn => {
+                btn.disabled = true; // 禁用所有按钮
+            });
+
+            // 获取当前点击按钮旁边的进度条
+            const progressCircle = button.nextElementSibling;
+            const progressBar = progressCircle.querySelector('.progress-fg');
+            const progressText = progressCircle.querySelector('.progress-text');
+
+            // 显示进度条
+            progressCircle.style.display = 'inline-block';
+            let progress = 0;
+            progressBar.style.strokeDashoffset = '100';
+            progressText.textContent = '0%';
+
+            // 创建一个XMLHttpRequest对象
+            const xhr = new XMLHttpRequest();
+
+            // 设置请求地址和方式
+            const url = `http://localhost:9547/action/${index}`;
+            xhr.open("GET", url, true);
+
+            // 模拟缓慢增长动画
+            const progressInterval = setInterval(() => {
+                if (progress < 80) {
+                    progress += 1;
+                    const offset = 100 - (progress * 100 / 100);
+                    progressBar.style.strokeDashoffset = offset;
+                    progressText.textContent = `${progress}%`;
+                }
+            }, 100);  // 每100ms增加1%
+
+            // 请求状态监听
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    clearInterval(progressInterval);  // 停止模拟进度
+                    progress = 100;
+                    const offset = 100 - (progress * 100 / 100);
+                    progressBar.style.strokeDashoffset = offset;
+                    progressText.textContent = '100%';
+
+                    // 延迟0.5秒后隐藏进度条并复原按钮
+                    setTimeout(() => {
+                        progressCircle.style.display = 'none'; // 隐藏进度条
+                        allButtons.forEach(btn => {
+                            btn.disabled = false; // 复原按钮
+                        });
+
+                        // 记录执行结果
+                        const recordSection = document.getElementById('recordSection');
+                        const recordItem = document.createElement('div');
+                        recordItem.classList.add('record-item');
+
+                        if (xhr.status === 200) {
+                            recordItem.classList.add('success');
+                            recordItem.textContent = `项目 ${item} 执行成功`;
+                        } else {
+                            recordItem.classList.add('failure');
+                            recordItem.textContent = `项目 ${item} 执行失败`;
+                        }
+
+                        // 将记录添加到记录区域
+                        recordSection.appendChild(recordItem);
+                    }, 500);
+                }
+            };
+
+            // 发送请求
+            xhr.send();
+        }
+    </script>
+</body>
+</html>

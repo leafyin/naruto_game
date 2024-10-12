@@ -1,8 +1,28 @@
 # encoding=utf-8
 from datetime import datetime
 
+import bottle
+from bottle import route, run, response, template, static_file
+
 from airtest.core.api import *
 from airtest.core.settings import *
+
+
+@route('/')
+def index():
+    items = ['一周礼包', '丰饶之间', '领取体力', '购买货物', '领取任务奖励', '忍者考试下一关']
+    return template('index', items=items)
+
+
+@route('/action/<index1:int>')
+def action(index1):
+    funcs = [reward_of_week, finish_big_reward, get_energy, buy_coin_stuff, receive_task_reward, next_level]
+    print(index1)
+    for index_, func in enumerate(funcs):
+        if index1 == index_:
+            callable(func())
+            return
+
 
 # 需要设置几个常量:deviceid、屏幕分辨率(这里是1280*720分辨率做参照)
 deviceid = "emulator-5556"
@@ -143,7 +163,6 @@ def receive_task_reward():
             if b == other_task_btn or b == week_task_btn:
                 times = 2
                 while times > 0:
-                    # todo 这里是几个任务奖励的坐标，不同设备坐标可能不一致，下次优化成绝对坐标
                     touch((785, 970))
                     touch((1030, 970))
                     touch((1300, 970))
@@ -194,4 +213,4 @@ def reward_of_week():
 
 
 if __name__ == '__main__':
-    get_energy()
+    run(host='localhost', port=9547, debug=True, reloader=True)
