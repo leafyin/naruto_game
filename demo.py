@@ -5,18 +5,19 @@ import bottle
 from bottle import route, run, response, template, static_file
 
 from airtest.core.api import *
+from airtest.core.error import *
 from airtest.core.settings import *
 
 
 @route('/')
 def index():
-    items = ['一周礼包', '丰饶之间', '领取体力', '购买货物', '领取任务奖励', '忍者考试下一关']
+    items = ['每日签到', '一周礼包', '丰饶之间', '领取体力', '购买货物', '领取任务奖励', '忍者考试下一关']
     return template('index', items=items)
 
 
 @route('/action/<index1:int>')
 def action(index1):
-    funcs = [reward_of_week, finish_big_reward, get_energy, buy_coin_stuff, receive_task_reward, next_level]
+    funcs = [sign, reward_of_week, finish_big_reward, get_energy, buy_coin_stuff, receive_task_reward, next_level]
     print(index1)
     for index_, func in enumerate(funcs):
         if index1 == index_:
@@ -45,8 +46,6 @@ other_task_btn = Template(r"img/tpl1705651584086.png", record_pos=(-0.407, -0.09
 day_task_btn = Template(r"img/tpl1705651674717.png", record_pos=(-0.408, -0.035), resolution=resolution)
 week_task_btn = Template(r"img/tpl1705651688297.png", record_pos=(-0.408, 0.02), resolution=resolution)
 
-receive_reward_btn = Template(r"img/tpl1705651327964.png")
-
 # 玩法
 wanfa_btn = Template(r"img/tpl1705653060271.png", record_pos=(0.45, 0.058), resolution=resolution)
 fengraozhijian_btn = Template(r"img/tpl1728661026148.png", record_pos=(-0.226, -0.085), resolution=resolution)
@@ -56,14 +55,42 @@ agree_btn = Template(r"img/tpl1728661653449.png", record_pos=(0.146, 0.116), res
 
 # 主页
 main_duihuan_btn = Template(r"img/tpl1728691142644.png", record_pos=(0.288, -0.188), resolution=resolution)
-main_fuli_btn = Template(r"img/tpl1728737903016.png", record_pos=(0.221, -0.189), resolution=resolution)
 
 duihuan_btn = Template(r"img/tpl1728691620710.png", record_pos=(0.145, 0.117), resolution=resolution)
 free_refresh_btn = Template(r"img/tpl1728693507109.png", record_pos=(0.365, 0.235), resolution=resolution)
-confirm_btn = Template(r"img/tpl1728693845195.png", record_pos=(0.146, 0.117), resolution=resolution)
 
 week_reward_tab = Template(r"img/tpl1728738062720.png", record_pos=(-0.413, 0.019), resolution=resolution)
 get_energy_tab = Template(r"img/tpl1728740006743.png", record_pos=(-0.412, -0.041), resolution=resolution)
+
+# 浮动按钮
+sign_entry = Template(r"img/tpl1728937306250.png")
+
+# 通用按钮，这些按钮通常不需要给定坐标，通过图像识别去点击
+accept_btn = Template(r"img/tpl1728937718836.png")
+confirm_btn = Template(r"img/tpl1728693845195.png")
+main_fuli_btn = Template(r"img/tpl1728737903016.png")
+receive_reward_btn = Template(r"img/tpl1705651327964.png")
+
+
+def touch_(t):
+    # 捕获一些常见的异常，确保不会出错
+    try:
+        touch(t)
+    except TargetNotFoundError as e:
+        print(e.value)
+        pass
+
+
+def sign():
+    """
+    每日签到
+    :return:
+    """
+    touch_(sign_entry)
+    touch_((0.5, 0.5))
+    touch_(accept_btn)
+    touch_(confirm_btn)
+    close(1)
 
 
 def close(t):
@@ -76,9 +103,9 @@ def close(t):
     close1_pos = relative_position((1200, 40), resolution)
     close2_pos = relative_position((1240, 30), resolution)
     if t == 1:
-        touch(close1_pos)
+        touch_(close1_pos)
     if t == 2:
-        touch(close2_pos)
+        touch_(close2_pos)
 
 
 def relative_position(xy: tuple, resolution_: tuple):
@@ -96,12 +123,15 @@ def get_energy():
     领取体力
     :return:
     """
-    touch(main_fuli_btn)
-    touch(get_energy_tab)
+    touch_(main_fuli_btn)
+    touch_(get_energy_tab)
 
-    touch(receive_reward_btn)
-    touch(receive_reward_btn)
-    touch(receive_reward_btn)
+    touch_(receive_reward_btn)
+    sleep(1)
+    touch_(receive_reward_btn)
+    sleep(1)
+    touch_(receive_reward_btn)
+    sleep(1)
     close(2)
     pass
 
@@ -113,7 +143,7 @@ def next_level():
     while 1:
         try:
             if exists(next_btn):
-                touch(next_btn)
+                touch_(next_btn)
                 sleep(1)
         except Exception:
             pass
@@ -131,20 +161,20 @@ def buy_coin_stuff():
     print(f"{pos1}-{pos2}-{pos3}")
 
     for i in range(0, 2):
-        touch(main_duihuan_btn)
+        touch_(main_duihuan_btn)
         # 第一个免费商品
-        touch(pos1)
-        touch(duihuan_btn)
+        touch_(pos1)
+        touch_(duihuan_btn)
         # 第二个免费商品
-        touch(pos2)
-        touch(duihuan_btn)
+        touch_(pos2)
+        touch_(duihuan_btn)
         # 第三个免费商品
-        touch(pos3)
-        touch(duihuan_btn)
+        touch_(pos3)
+        touch_(duihuan_btn)
 
         # 免费刷新
-        touch(free_refresh_btn)
-        touch(confirm_btn)
+        touch_(free_refresh_btn)
+        touch_(confirm_btn)
 
     close(1)
 
@@ -154,23 +184,23 @@ def receive_task_reward():
     领取任务奖励
     :return:
     """
-    touch(task_btn)
+    touch_(task_btn)
     rrb = receive_reward_btn
     task_bts = [main_task_btn, other_task_btn, day_task_btn, week_task_btn]
     for b in task_bts:
-        touch(b)
+        touch_(b)
         while 1:
             if b == other_task_btn or b == week_task_btn:
                 times = 2
                 while times > 0:
-                    touch((785, 970))
-                    touch((1030, 970))
-                    touch((1300, 970))
-                    touch((1550, 970))
-                    touch((1820, 970))
+                    touch_((785, 970))
+                    touch_((1030, 970))
+                    touch_((1300, 970))
+                    touch_((1550, 970))
+                    touch_((1820, 970))
                     times -= 1
             if exists(rrb):
-                touch(rrb)
+                touch_(rrb)
             else:
                 break
 
@@ -180,15 +210,15 @@ def finish_big_reward():
     完成丰饶之间
     :return:
     """
-    touch(wanfa_btn)
-    touch(fengraozhijian_btn)
-    touch(money_entry)
+    touch_(wanfa_btn)
+    touch_(fengraozhijian_btn)
+    touch_(money_entry)
     r_pos = relative_position((650, 550), resolution)
     for i in range(0, 2):
-        touch(quickly_fight)
+        touch_(quickly_fight)
         if exists(agree_btn):
-            touch(agree_btn)
-            touch(r_pos)
+            touch_(agree_btn)
+            touch_(r_pos)
     close(2)
     close(2)
 
@@ -201,14 +231,14 @@ def reward_of_week():
     today = datetime.today().date()
     # 0-6
     day_of_week = today.weekday()
-    touch(main_fuli_btn)
-    touch(week_reward_tab)
+    touch_(main_fuli_btn)
+    touch_(week_reward_tab)
     if day_of_week == 5:
-        touch(receive_reward_btn)
+        touch_(receive_reward_btn)
     if day_of_week == 6:
-        touch(receive_reward_btn)
+        touch_(receive_reward_btn)
     if day_of_week == 0:
-        touch(receive_reward_btn)
+        touch_(receive_reward_btn)
     close(2)
 
 
