@@ -47,16 +47,17 @@ day_task_btn = Template(r"img/tpl1705651674717.png", record_pos=(-0.408, -0.035)
 week_task_btn = Template(r"img/tpl1705651688297.png", record_pos=(-0.408, 0.02), resolution=resolution)
 
 # 玩法
-wanfa_btn = Template(r"img/tpl1705653060271.png", record_pos=(0.45, 0.058), resolution=resolution)
-fengraozhijian_btn = Template(r"img/tpl1728661026148.png", record_pos=(-0.226, -0.085), resolution=resolution)
-money_entry = Template(r"img/tpl1728661370929.png", record_pos=(-0.283, 0.02), resolution=resolution)
+wanfa_btn = Template(r"img/tpl1705653060271.png")
+fengraozhijian_btn = Template(r"img/tpl1728661026148.png")
+money_entry = Template(r"img/tpl1728661370929.png")
+reward_entry = Template(r"img/tpl1728948837371.png")
+
 quickly_fight = Template(r"img/tpl1728661514790.png", record_pos=(0.134, 0.231), resolution=resolution)
-agree_btn = Template(r"img/tpl1728661653449.png", record_pos=(0.146, 0.116), resolution=resolution)
 
 # 主页
-main_duihuan_btn = Template(r"img/tpl1728691142644.png", record_pos=(0.288, -0.188), resolution=resolution)
+main_duihuan_btn = Template(r"img/tpl1728691142644.png")
+main_fuli_btn = Template(r"img/tpl1728737903016.png")
 
-duihuan_btn = Template(r"img/tpl1728691620710.png", record_pos=(0.145, 0.117), resolution=resolution)
 free_refresh_btn = Template(r"img/tpl1728693507109.png", record_pos=(0.365, 0.235), resolution=resolution)
 
 week_reward_tab = Template(r"img/tpl1728738062720.png", record_pos=(-0.413, 0.019), resolution=resolution)
@@ -68,13 +69,19 @@ sign_entry = Template(r"img/tpl1728937306250.png")
 # 通用按钮，这些按钮通常不需要给定坐标，通过图像识别去点击
 accept_btn = Template(r"img/tpl1728937718836.png")
 confirm_btn = Template(r"img/tpl1728693845195.png")
-main_fuli_btn = Template(r"img/tpl1728737903016.png")
+
 receive_reward_btn = Template(r"img/tpl1705651327964.png")
+exchange_btn = Template(r"img/tpl1728691620710.png")
+agree_btn = Template(r"img/tpl1728661653449.png")
+onekey_receive_btn = Template(r"img/tpl1728948614242.png")
+
+close_btn = Template(r"img/tpl1728949714777.png")
 
 
 def touch_(t):
     # 捕获一些常见的异常，确保不会出错
     try:
+        sleep(1)
         touch(t)
     except TargetNotFoundError as e:
         print(e.value)
@@ -96,16 +103,22 @@ def sign():
 def close(t):
     """
     关闭按钮
-    1=float window
-    2=panel window
+    1 = float window
+    2 = panel window
+    3 = small float window
     :return:
     """
+    sleep(1)
     close1_pos = relative_position((1200, 40), resolution)
     close2_pos = relative_position((1240, 30), resolution)
+    close3_pos = relative_position((1045, 100), resolution)
     if t == 1:
         touch_(close1_pos)
     if t == 2:
         touch_(close2_pos)
+    if t == 3:
+        # 小窗口
+        touch_(close3_pos)
 
 
 def relative_position(xy: tuple, resolution_: tuple):
@@ -127,11 +140,8 @@ def get_energy():
     touch_(get_energy_tab)
 
     touch_(receive_reward_btn)
-    sleep(1)
     touch_(receive_reward_btn)
-    sleep(1)
     touch_(receive_reward_btn)
-    sleep(1)
     close(2)
     pass
 
@@ -141,12 +151,7 @@ def next_level():
     忍者考试下一关
     """
     while 1:
-        try:
-            if exists(next_btn):
-                touch_(next_btn)
-                sleep(1)
-        except Exception:
-            pass
+        touch_(next_btn)
 
 
 def buy_coin_stuff():
@@ -159,23 +164,20 @@ def buy_coin_stuff():
     pos2 = relative_position((600, y), resolution)
     pos3 = relative_position((840, y), resolution)
     print(f"{pos1}-{pos2}-{pos3}")
-
+    touch_(main_duihuan_btn)
     for i in range(0, 2):
-        touch_(main_duihuan_btn)
         # 第一个免费商品
         touch_(pos1)
-        touch_(duihuan_btn)
+        touch_(exchange_btn)
         # 第二个免费商品
         touch_(pos2)
-        touch_(duihuan_btn)
+        touch_(exchange_btn)
         # 第三个免费商品
         touch_(pos3)
-        touch_(duihuan_btn)
-
+        touch_(exchange_btn)
         # 免费刷新
         touch_(free_refresh_btn)
         touch_(confirm_btn)
-
     close(1)
 
 
@@ -214,11 +216,16 @@ def finish_big_reward():
     touch_(fengraozhijian_btn)
     touch_(money_entry)
     r_pos = relative_position((650, 550), resolution)
-    for i in range(0, 2):
+    while range(0, 2):
         touch_(quickly_fight)
         if exists(agree_btn):
             touch_(agree_btn)
+            sleep(1)
             touch_(r_pos)
+    touch_(reward_entry)
+    touch_(onekey_receive_btn)
+    touch_(r_pos)
+    close(3)
     close(2)
     close(2)
 
