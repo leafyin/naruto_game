@@ -216,7 +216,7 @@ def finish_big_reward():
     touch_(fengraozhijian_btn)
     touch_(money_entry)
     r_pos = relative_position((650, 550), resolution)
-    while range(0, 2):
+    for i in range(0, 2):
         touch_(quickly_fight)
         if exists(agree_btn):
             touch_(agree_btn)
