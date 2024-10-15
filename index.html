@@ -11,7 +11,7 @@
             padding: 0;
             background-color: #4a4a4a; /* 背景稍微亮一点 */
             display: flex;
-            justify-content: flex-start; /* 内容靠左 */
+            flex-direction: column; /* 垂直布局 */
             align-items: flex-start;
             height: 100vh;
         }
@@ -24,9 +24,23 @@
             height: 90vh; /* 框架高度与页面一致 */
             max-width: 100%;
             padding: 20px;
-            margin-left: 10px;
-            margin-top: 10px; /* 顶部留一些间距 */
+            margin: 10px; /* 顶部和左侧留一些间距 */
             overflow-y: auto; /* 支持滚动 */
+        }
+        .title {
+            font-size: 1.2em;
+            text-align: left; /* 左对齐 */
+            color: #f0f0f0;
+            margin: 20px 0;
+        }
+        select {
+            width: 100%; /* 下拉框宽度 */
+            padding: 10px; /* 下拉框内边距 */
+            border-radius: 8px; /* 圆角 */
+            border: 1px solid #007BFF; /* 边框颜色 */
+            margin-bottom: 20px; /* 下拉框与列表间距 */
+            background-color: #333; /* 背景色 */
+            color: #f0f0f0; /* 字体颜色 */
         }
         table {
             width: 100%; /* 表格宽度 */
@@ -87,19 +101,6 @@
             stroke-dashoffset: 100;
             transition: stroke-dashoffset 0.3s ease;
         }
-        .progress-text {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 10px;
-            color: #f0f0f0;
-        }
-
         /* 记录区域 */
         .record-section {
             position: fixed;
@@ -135,11 +136,16 @@
 </head>
 <body>
     <div class="container">
-        <h1 style="font-size: 1.2em; text-align: center; color: #f0f0f0; margin: 20px 0;">我的列表</h1>
+        <!-- 下拉框标题 -->
+        <div class="title">设备</div>
+        <!-- 下拉框 -->
+        <select id="dropdown"></select>
+        <!-- 表格标题 -->
+        <div class="title">任务</div>
         <table>
             <thead>
                 <tr>
-                    <th>项目名称</th>
+                    <th>任务名称</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -148,14 +154,13 @@
                     <tr>
                         <td>{{ item }}</td>
                         <td>
-                            <button onclick="handleClick('{{ item }}', {{ index }}, this)">点击</button>
+                            <button onclick="handleClick('{{ item }}', {{ index }}, this)">执行</button>
                             <!-- 圆形进度条 -->
                             <div class="progress-circle">
                                 <svg viewBox="0 0 32 32">
                                     <circle class="progress-bg" cx="16" cy="16" r="15"></circle>
                                     <circle class="progress-fg" cx="16" cy="16" r="15"></circle>
                                 </svg>
-                                <div class="progress-text">0%</div>
                             </div>
                         </td>
                     </tr>
@@ -166,10 +171,29 @@
 
     <!-- 记录展示区域 -->
     <div class="record-section" id="recordSection">
-        <h3>操作记录</h3>
+        <h3>任务记录</h3>
     </div>
 
     <script>
+        // 通过接口获取下拉框内容
+        async function loadDropdown() {
+            const response = await fetch('http://localhost:9547/dropdown');
+            const data = await response.json(); // 假设返回的格式是字符串数组
+            const dropdown = document.getElementById('dropdown');
+
+            // 清空下拉框
+            dropdown.innerHTML = '';
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item; // 设置option的值
+                option.textContent = item; // 设置option的文本
+                dropdown.appendChild(option);
+            });
+        }
+
+        // 页面加载时调用下拉框加载函数
+        window.onload = loadDropdown;
+
         function handleClick(item, index, button) {
             // 获取所有按钮并置灰
             const allButtons = document.querySelectorAll('button');
@@ -180,13 +204,11 @@
             // 获取当前点击按钮旁边的进度条
             const progressCircle = button.nextElementSibling;
             const progressBar = progressCircle.querySelector('.progress-fg');
-            const progressText = progressCircle.querySelector('.progress-text');
 
             // 显示进度条
             progressCircle.style.display = 'inline-block';
             let progress = 0;
             progressBar.style.strokeDashoffset = '100';
-            progressText.textContent = '0%';
 
             // 创建一个XMLHttpRequest对象
             const xhr = new XMLHttpRequest();
@@ -201,7 +223,6 @@
                     progress += 1;
                     const offset = 100 - (progress * 100 / 100);
                     progressBar.style.strokeDashoffset = offset;
-                    progressText.textContent = `${progress}%`;
                 }
             }, 100);  // 每100ms增加1%
 
@@ -212,7 +233,6 @@
                     progress = 100;
                     const offset = 100 - (progress * 100 / 100);
                     progressBar.style.strokeDashoffset = offset;
-                    progressText.textContent = '100%';
 
                     // 延迟0.5秒后隐藏进度条并复原按钮
                     setTimeout(() => {
@@ -224,17 +244,13 @@
                         // 记录执行结果
                         const recordSection = document.getElementById('recordSection');
                         const recordItem = document.createElement('div');
-                        recordItem.classList.add('record-item');
-
                         if (xhr.status === 200) {
-                            recordItem.classList.add('success');
-                            recordItem.textContent = `项目 ${item} 执行成功`;
+                            recordItem.className = 'record-item success';
+                            recordItem.textContent = `成功执行任务: ${item}`;
                         } else {
-                            recordItem.classList.add('failure');
-                            recordItem.textContent = `项目 ${item} 执行失败`;
+                            recordItem.className = 'record-item failure';
+                            recordItem.textContent = `失败执行任务: ${item}`;
                         }
-
-                        // 将记录添加到记录区域
                         recordSection.appendChild(recordItem);
                     }, 500);
                 }

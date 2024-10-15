@@ -1,28 +1,9 @@
 # encoding=utf-8
 from datetime import datetime
 
-import bottle
-from bottle import route, run, response, template, static_file
-
 from airtest.core.api import *
 from airtest.core.error import *
 from airtest.core.settings import *
-
-
-@route('/')
-def index():
-    items = ['每日签到', '一周礼包', '丰饶之间', '领取体力', '购买货物', '领取任务奖励', '忍者考试下一关']
-    return template('index', items=items)
-
-
-@route('/action/<index1:int>')
-def action(index1):
-    funcs = [sign, reward_of_week, finish_big_reward, get_energy, buy_coin_stuff, receive_task_reward, next_level]
-    print(index1)
-    for index_, func in enumerate(funcs):
-        if index1 == index_:
-            callable(func())
-            return
 
 
 # 需要设置几个常量:deviceid、屏幕分辨率(这里是1280*720分辨率做参照)
@@ -50,6 +31,8 @@ week_task_btn = Template(r"img/tpl1705651688297.png", record_pos=(-0.408, 0.02),
 wanfa_btn = Template(r"img/tpl1705653060271.png")
 fengraozhijian_btn = Template(r"img/tpl1728661026148.png")
 money_entry = Template(r"img/tpl1728661370929.png")
+exp_entry = Template(r"img/tpl1728951290763.png")
+
 reward_entry = Template(r"img/tpl1728948837371.png")
 
 quickly_fight = Template(r"img/tpl1728661514790.png", record_pos=(0.134, 0.231), resolution=resolution)
@@ -88,16 +71,14 @@ def touch_(t):
         pass
 
 
-def sign():
+def relative_position(xy: tuple, resolution_: tuple):
     """
-    每日签到
-    :return:
+    计算相对位置
+    :param xy: 绝对坐标
+    :param resolution_: 分辨率
+    :return tuple: 相对坐标
     """
-    touch_(sign_entry)
-    touch_((0.5, 0.5))
-    touch_(accept_btn)
-    touch_(confirm_btn)
-    close(1)
+    return round(xy[0] / resolution_[0], 2), round(xy[1] / resolution_[1], 2)
 
 
 def close(t):
@@ -121,14 +102,16 @@ def close(t):
         touch_(close3_pos)
 
 
-def relative_position(xy: tuple, resolution_: tuple):
+def sign():
     """
-    计算相对位置
-    :param xy: 绝对坐标
-    :param resolution_: 分辨率
-    :return tuple: 相对坐标
+    每日签到
+    :return:
     """
-    return round(xy[0] / resolution_[0], 2), round(xy[1] / resolution_[1], 2)
+    touch_(sign_entry)
+    touch_((0.5, 0.5))
+    touch_(accept_btn)
+    touch_(confirm_btn)
+    close(1)
 
 
 def get_energy():
@@ -207,14 +190,37 @@ def receive_task_reward():
                 break
 
 
-def finish_big_reward():
+def money_reward():
     """
-    完成丰饶之间
+    赏金
     :return:
     """
     touch_(wanfa_btn)
     touch_(fengraozhijian_btn)
     touch_(money_entry)
+    r_pos = relative_position((650, 550), resolution)
+    for i in range(0, 2):
+        touch_(quickly_fight)
+        if exists(agree_btn):
+            touch_(agree_btn)
+            sleep(1)
+            touch_(r_pos)
+    touch_(reward_entry)
+    touch_(onekey_receive_btn)
+    touch_(r_pos)
+    close(3)
+    close(2)
+    close(2)
+
+
+def exp_reward():
+    """
+    经验
+    :return:
+    """
+    touch_(wanfa_btn)
+    touch_(fengraozhijian_btn)
+    touch_(exp_entry)
     r_pos = relative_position((650, 550), resolution)
     for i in range(0, 2):
         touch_(quickly_fight)
@@ -250,4 +256,4 @@ def reward_of_week():
 
 
 if __name__ == '__main__':
-    run(host='localhost', port=9547, debug=True, reloader=True)
+    pass
