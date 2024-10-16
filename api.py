@@ -1,9 +1,8 @@
-
 import json
 import platform
 import subprocess
 
-from bottle import route, run, response, template, static_file
+from bottle import *
 from demo import *
 
 
@@ -14,15 +13,30 @@ def index():
     return template('index', items=items)
 
 
+@route('/static/<filepath:path>')
+def server_static(filepath):
+    return static_file(filepath, root='static')
+
+
 @route('/action/<index1:int>')
 def action(index1):
     funcs = [sign, reward_of_week, money_reward, exp_reward,
              get_energy, buy_coin_stuff, receive_task_reward, next_level]
-    print(index1)
     for index_, func in enumerate(funcs):
         if index1 == index_:
             callable(func())
             break
+    return
+
+
+@route('/selectDevice/<deviceid>')
+def select_device(deviceid):
+    if deviceid:
+        auto_setup(devices=[
+            f"Android://127.0.0.1:5037/{deviceid}?cap_method=JAVACAP"
+            f"&&ori_method=MINICAPORI"
+            f"&&touch_method=MAXTOUCH"
+        ])
     return
 
 

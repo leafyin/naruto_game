@@ -4,169 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>列表展示</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #4a4a4a; /* 背景稍微亮一点 */
-            display: flex;
-            flex-direction: column; /* 垂直布局 */
-            align-items: flex-start;
-            height: 100vh;
-        }
-        .container {
-            border: 3px solid #000; /* 黑色边框 */
-            border-radius: 40px; /* 框架圆角 */
-            background-color: #1c1c1c; /* 深色背景 */
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7); /* 强烈阴影效果 */
-            width: 400px;
-            height: 90vh; /* 框架高度与页面一致 */
-            max-width: 100%;
-            padding: 20px;
-            margin: 10px; /* 顶部和左侧留一些间距 */
-            overflow-y: auto; /* 支持滚动 */
-        }
-        .title {
-            font-size: 1.2em;
-            text-align: left; /* 左对齐 */
-            color: #f0f0f0;
-            margin: 20px 0;
-        }
-        select {
-            width: 100%; /* 下拉框宽度 */
-            padding: 10px; /* 下拉框内边距 */
-            border-radius: 8px; /* 圆角 */
-            border: 1px solid #007BFF; /* 边框颜色 */
-            margin-bottom: 20px; /* 下拉框与列表间距 */
-            background-color: #333; /* 背景色 */
-            color: #f0f0f0; /* 字体颜色 */
-        }
-        table {
-            width: 100%; /* 表格宽度 */
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            font-size: 16px; /* 字体大小适中 */
-            color: #f0f0f0; /* 字体颜色为浅色 */
-            vertical-align: middle;
-        }
-        th {
-            background-color: #333; /* 表头背景为深色 */
-            border-bottom: 2px solid #007BFF; /* 表头底部边框 */
-        }
-        tr {
-            border-bottom: 1px solid #555; /* 行底部边框为深色 */
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            font-size: 14px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:disabled {
-            background-color: #555; /* 置灰后的按钮颜色 */
-            cursor: not-allowed; /* 禁用时鼠标不可点击 */
-        }
-
-        /* 圆形进度条样式 */
-        .progress-circle {
-            width: 30px;
-            height: 30px;
-            position: relative;
-            display: inline-block;
-            margin-left: 10px; /* 与按钮保持同一行，稍微向右 */
-            vertical-align: middle; /* 与按钮平行 */
-            display: none; /* 默认不展示，点击时显示 */
-        }
-        .progress-circle svg {
-            transform: rotate(-90deg);
-        }
-        .progress-circle circle {
-            fill: none;
-            stroke-width: 3;
-        }
-        .progress-bg {
-            stroke: rgba(255, 255, 255, 0.2); /* 背景圆圈 */
-        }
-        .progress-fg {
-            stroke: #007BFF; /* 前景圆圈进度条 */
-            stroke-dasharray: 100;
-            stroke-dashoffset: 100;
-            transition: stroke-dashoffset 0.3s ease;
-        }
-        /* 记录区域 */
-        .record-section {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background-color: #1c1c1c;
-            border: 2px solid #333;
-            border-radius: 10px;
-            padding: 15px;
-            width: 250px;
-            max-height: 300px;
-            overflow-y: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 添加阴影效果 */
-            color: #f0f0f0;
-            font-size: 14px;
-        }
-        .record-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .record-item.success::before {
-            content: '✔'; /* 绿色勾 */
-            color: green;
-            margin-right: 8px;
-        }
-        .record-item.failure::before {
-            content: '✖'; /* 红色叉 */
-            color: red;
-            margin-right: 8px;
-        }
-    </style>
+    <link rel="stylesheet" href="http://localhost:9547/static/styles.css"> <!-- 引入外部样式文件 -->
 </head>
 <body>
     <div class="container">
-        <!-- 下拉框标题 -->
         <div class="title">设备</div>
-        <!-- 下拉框 -->
-        <select id="dropdown"></select>
+        <select id="dropdown">
+            <option value="" disabled selected>请选择设备</option>
+        </select>
         <!-- 表格标题 -->
         <div class="title">任务</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>任务名称</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                % for index, item in enumerate(items):
+        <div>
+            <table>
+                <thead class="table-header"> <!-- 修改为使用类名 -->
                     <tr>
-                        <td>{{ item }}</td>
-                        <td>
-                            <button onclick="handleClick('{{ item }}', {{ index }}, this)">执行</button>
-                            <!-- 圆形进度条 -->
-                            <div class="progress-circle">
-                                <svg viewBox="0 0 32 32">
-                                    <circle class="progress-bg" cx="16" cy="16" r="15"></circle>
-                                    <circle class="progress-fg" cx="16" cy="16" r="15"></circle>
-                                </svg>
-                            </div>
-                        </td>
+                        <th>任务名称</th>
+                        <th>操作</th>
                     </tr>
-                % end
-            </tbody>
-        </table>
+                </thead>
+            </table>
+            <div class="table-container"> <!-- 新增的表体容器 -->
+                <table>
+                    <tbody>
+                        % for index, item in enumerate(items):
+                            <tr>
+                                <td>{{ item }}</td>
+                                <td>
+                                    <button onclick="handleClick('{{ item }}', {{ index }}, this)">执行</button>
+                                    <!-- 圆形进度条 -->
+                                    <div class="progress-circle">
+                                        <svg viewBox="0 0 32 32">
+                                            <circle class="progress-bg" cx="16" cy="16" r="15"></circle>
+                                            <circle class="progress-fg" cx="16" cy="16" r="15"></circle>
+                                        </svg>
+                                    </div>
+                                </td>
+                            </tr>
+                        % end
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- 记录展示区域 -->
@@ -174,91 +52,6 @@
         <h3>任务记录</h3>
     </div>
 
-    <script>
-        // 通过接口获取下拉框内容
-        async function loadDropdown() {
-            const response = await fetch('http://localhost:9547/dropdown');
-            const data = await response.json(); // 假设返回的格式是字符串数组
-            const dropdown = document.getElementById('dropdown');
-
-            // 清空下拉框
-            dropdown.innerHTML = '';
-            data.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item; // 设置option的值
-                option.textContent = item; // 设置option的文本
-                dropdown.appendChild(option);
-            });
-        }
-
-        // 页面加载时调用下拉框加载函数
-        window.onload = loadDropdown;
-
-        function handleClick(item, index, button) {
-            // 获取所有按钮并置灰
-            const allButtons = document.querySelectorAll('button');
-            allButtons.forEach(btn => {
-                btn.disabled = true; // 禁用所有按钮
-            });
-
-            // 获取当前点击按钮旁边的进度条
-            const progressCircle = button.nextElementSibling;
-            const progressBar = progressCircle.querySelector('.progress-fg');
-
-            // 显示进度条
-            progressCircle.style.display = 'inline-block';
-            let progress = 0;
-            progressBar.style.strokeDashoffset = '100';
-
-            // 创建一个XMLHttpRequest对象
-            const xhr = new XMLHttpRequest();
-
-            // 设置请求地址和方式
-            const url = `http://localhost:9547/action/${index}`;
-            xhr.open("GET", url, true);
-
-            // 模拟缓慢增长动画
-            const progressInterval = setInterval(() => {
-                if (progress < 80) {
-                    progress += 1;
-                    const offset = 100 - (progress * 100 / 100);
-                    progressBar.style.strokeDashoffset = offset;
-                }
-            }, 100);  // 每100ms增加1%
-
-            // 请求状态监听
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    clearInterval(progressInterval);  // 停止模拟进度
-                    progress = 100;
-                    const offset = 100 - (progress * 100 / 100);
-                    progressBar.style.strokeDashoffset = offset;
-
-                    // 延迟0.5秒后隐藏进度条并复原按钮
-                    setTimeout(() => {
-                        progressCircle.style.display = 'none'; // 隐藏进度条
-                        allButtons.forEach(btn => {
-                            btn.disabled = false; // 复原按钮
-                        });
-
-                        // 记录执行结果
-                        const recordSection = document.getElementById('recordSection');
-                        const recordItem = document.createElement('div');
-                        if (xhr.status === 200) {
-                            recordItem.className = 'record-item success';
-                            recordItem.textContent = `成功执行任务: ${item}`;
-                        } else {
-                            recordItem.className = 'record-item failure';
-                            recordItem.textContent = `失败执行任务: ${item}`;
-                        }
-                        recordSection.appendChild(recordItem);
-                    }, 500);
-                }
-            };
-
-            // 发送请求
-            xhr.send();
-        }
-    </script>
+    <script src="http://localhost:9547/static/script.js"></script> <!-- 引入外部脚本文件 -->
 </body>
 </html>

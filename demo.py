@@ -5,17 +5,8 @@ from airtest.core.api import *
 from airtest.core.error import *
 from airtest.core.settings import *
 
-
-# 需要设置几个常量:deviceid、屏幕分辨率(这里是1280*720分辨率做参照)
-deviceid = "emulator-5556"
-resolution = (1280, 720)
 ST.OPDELAY = 1
-
-auto_setup(devices=[
-    f"Android://127.0.0.1:5037/{deviceid}?cap_method=JAVACAP"
-    f"&&ori_method=MINICAPORI"
-    f"&&touch_method=MAXTOUCH"
-])
+resolution = None
 
 
 challenge_btn = Template(r"img/tpl1705393786480.png", record_pos=(0.405, 0.237), resolution=resolution)
