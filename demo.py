@@ -99,7 +99,7 @@ def onekey_finish():
     一键操作
     :return:
     """
-    # sign()
+    sign()
     money_reward()
     exp_reward()
     vision_reward()
