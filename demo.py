@@ -6,7 +6,7 @@ from airtest.core.error import *
 from airtest.core.settings import *
 
 ST.OPDELAY = 1
-resolution = None
+resolution = (1280, 720)
 
 
 challenge_btn = Template(r"img/tpl1705393786480.png", record_pos=(0.405, 0.237), resolution=resolution)
@@ -23,6 +23,7 @@ wanfa_btn = Template(r"img/tpl1705653060271.png")
 fengraozhijian_btn = Template(r"img/tpl1728661026148.png")
 money_entry = Template(r"img/tpl1728661370929.png")
 exp_entry = Template(r"img/tpl1728951290763.png")
+vision_entry = Template(r"img/tpl1729132985504.png")
 
 reward_entry = Template(r"img/tpl1728948837371.png")
 
@@ -91,6 +92,18 @@ def close(t):
     if t == 3:
         # 小窗口
         touch_(close3_pos)
+
+
+def onekey_finish():
+    """
+    一键操作
+    :return:
+    """
+    # sign()
+    money_reward()
+    exp_reward()
+    vision_reward()
+    pass
 
 
 def sign():
@@ -191,6 +204,7 @@ def money_reward():
     touch_(money_entry)
     r_pos = relative_position((650, 550), resolution)
     for i in range(0, 2):
+        sleep(1)
         touch_(quickly_fight)
         if exists(agree_btn):
             touch_(agree_btn)
@@ -198,6 +212,7 @@ def money_reward():
             touch_(r_pos)
     touch_(reward_entry)
     touch_(onekey_receive_btn)
+    sleep(1)
     touch_(r_pos)
     close(3)
     close(2)
@@ -214,6 +229,7 @@ def exp_reward():
     touch_(exp_entry)
     r_pos = relative_position((650, 550), resolution)
     for i in range(0, 2):
+        sleep(1)
         touch_(quickly_fight)
         if exists(agree_btn):
             touch_(agree_btn)
@@ -221,8 +237,29 @@ def exp_reward():
             touch_(r_pos)
     touch_(reward_entry)
     touch_(onekey_receive_btn)
+    sleep(1)
     touch_(r_pos)
     close(3)
+    close(2)
+    close(2)
+
+
+def vision_reward():
+    """
+    幻想奖励
+    :return:
+    """
+    touch_(wanfa_btn)
+    touch_(fengraozhijian_btn)
+    touch_(vision_entry)
+    r_pos = relative_position((650, 550), resolution)
+    for i in range(0, 2):
+        sleep(1)
+        touch_(quickly_fight)
+        if exists(agree_btn):
+            touch_(agree_btn)
+            sleep(1)
+            touch_(r_pos)
     close(2)
     close(2)
 

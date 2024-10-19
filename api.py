@@ -40,6 +40,12 @@ def select_device(deviceid):
     return
 
 
+@route('/onekey')
+def onekey():
+    onekey_finish()
+    return
+
+
 @route('/dropdown')
 def dropdown():
     response.content_type = 'application/json'
