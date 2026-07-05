@@ -1,0 +1,179 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #4a4a4a; /* 背景稍微亮一点 */
+    display: flex;
+    flex-direction: column; /* 垂直布局 */
+    align-items: flex-start;
+    height: 100vh;
+}
+
+.container {
+    border: 3px solid #000; /* 黑色边框 */
+    border-radius: 40px; /* 框架圆角 */
+    background-color: #1c1c1c; /* 深色背景 */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.7); /* 强烈阴影效果 */
+    width: 400px;
+    height: 90vh; /* 框架高度与页面一致 */
+    max-width: 100%;
+    padding: 20px;
+    margin: 10px; /* 顶部和左侧留一些间距 */
+    overflow-y: auto; /* 支持滚动 */
+}
+
+.title {
+    font-size: 1.2em;
+    text-align: left; /* 左对齐 */
+    color: #f0f0f0;
+    margin: 20px 0;
+}
+
+select {
+    width: 100%; /* 下拉框宽度 */
+    padding: 10px; /* 下拉框内边距 */
+    border-radius: 8px; /* 圆角 */
+    border: 1px solid #007BFF; /* 边框颜色 */
+    margin-bottom: 20px; /* 下拉框与列表间距 */
+    background-color: #333; /* 背景色 */
+    color: #f0f0f0; /* 字体颜色 */
+}
+
+table {
+    width: 100%; /* 表格宽度 */
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    font-size: 16px; /* 字体大小适中 */
+    color: #f0f0f0; /* 字体颜色为浅色 */
+    vertical-align: middle;
+}
+
+th {
+    background-color: #333; /* 表头背景为深色 */
+    border-bottom: 2px solid #007BFF; /* 表头底部边框 */
+}
+
+tr {
+    border-bottom: 1px solid #555; /* 行底部边框为深色 */
+}
+
+button {
+    margin-left: 5px; /* 按钮与文本框的间距 */
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px; /* 调整内边距以匹配文本框 */
+    font-size: 14px;
+    border-radius: 8px; /* 圆角 */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:disabled {
+    background-color: #555; /* 置灰后的按钮颜色 */
+    cursor: not-allowed; /* 禁用时鼠标不可点击 */
+}
+
+/* 圆形进度条样式 */
+.progress-circle {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    display: inline-block;
+    margin-left: 10px; /* 与按钮保持同一行，稍微向右 */
+    vertical-align: middle; /* 与按钮平行 */
+    display: none; /* 默认不展示，点击时显示 */
+}
+
+.progress-circle svg {
+    transform: rotate(-90deg);
+}
+
+.progress-circle circle {
+    fill: none;
+    stroke-width: 3;
+}
+
+.progress-bg {
+    stroke: rgba(255, 255, 255, 0.2); /* 背景圆圈 */
+}
+
+.progress-fg {
+    stroke: #007BFF; /* 前景圆圈进度条 */
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    transition: stroke-dashoffset 0.3s ease;
+}
+
+/* 记录区域 */
+.record-section {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: #1c1c1c;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 15px;
+    width: 250px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 添加阴影效果 */
+    color: #f0f0f0;
+    font-size: 14px;
+}
+
+.record-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.record-item.success::before {
+    content: '✔'; /* 绿色勾 */
+    color: green;
+    margin-right: 8px;
+}
+
+.record-item.failure::before {
+    content: '✖'; /* 红色叉 */
+    color: red;
+    margin-right: 8px;
+}
+
+.table-container {
+    max-height: 60vh; /* 设置最大高度 */
+    overflow-y: auto; /* 添加垂直滚动条 */
+    border-radius: 10px; /* 圆角 */
+    overflow-y: auto;
+}
+
+/* 自定义滚动条样式 */
+.table-container::-webkit-scrollbar {
+    width: 8px; /* 滚动条宽度 */
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #333; /* 滚动条轨道背景 */
+    border-radius: 10px; /* 圆角 */
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #007BFF; /* 滚动条颜色 */
+    border-radius: 10px; /* 圆角 */
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #0056b3; /* 鼠标悬停时颜色 */
+}
+
+.table-header {
+    background-color: #333; /* 表头背景颜色 */
+    position: sticky; /* 让表头固定在顶部 */
+    top: 0; /* 贴紧顶部 */
+    z-index: 1; /* 确保在其他内容上面 */
+}
